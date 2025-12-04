@@ -21,12 +21,8 @@
         <div class="score-bar">
           <label for="score-range">当前荒漠化水平：</label>
           <span id="score-text">0.00</span>
-          <div class="score-progress">
-            <div id="score-fill"></div>
-          </div>
           <div class="score-slider-row">
             <input id="score-slider" type="range" min="0" max="100" value="50" />
-            <span class="slider-hint">拖动可预览不同等级</span>
           </div>
           <div class="score-labels">
             <span>轻微</span>
@@ -37,13 +33,14 @@
       </section>
 
       <section class="cause-panel">
-        <h2>成因输入与列表</h2>
+        <h2>成因输入</h2>
         <div class="input-row">
           <input id="cause-input" type="text" placeholder="输入荒漠化成因，如：过度放牧" />
-          <button id="check-btn">加入列表</button>
         </div>
         <ul id="suggest-list" class="suggest-list"></ul>
         <p id="feedback" class="feedback"></p>
+
+        <h3>成因列表</h3>
 
         <div class="lists">
           <div class="list-block">

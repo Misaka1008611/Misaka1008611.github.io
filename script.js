@@ -68,12 +68,10 @@ function updateScore() {
   lastRealScore = score;
 
   const scoreText = document.getElementById("score-text");
-  const scoreFill = document.getElementById("score-fill");
   const img = document.getElementById("desert-image");
   const slider = document.getElementById("score-slider");
 
   scoreText.textContent = score.toFixed(2);
-  scoreFill.style.width = `${score * 100}%`;
 
   const level = LEVEL_IMAGES.find(l => score <= l.max) || LEVEL_IMAGES[LEVEL_IMAGES.length - 1];
   img.src = level.src;
@@ -89,12 +87,10 @@ function applyScoreToUI(score) {
   score = Math.max(0, Math.min(1, score));
 
   const scoreText = document.getElementById("score-text");
-  const scoreFill = document.getElementById("score-fill");
   const img = document.getElementById("desert-image");
   const slider = document.getElementById("score-slider");
 
   scoreText.textContent = score.toFixed(2);
-  scoreFill.style.width = `${score * 100}%`;
 
   const level = LEVEL_IMAGES.find(l => score <= l.max) || LEVEL_IMAGES[LEVEL_IMAGES.length - 1];
   img.src = level.src;
@@ -239,52 +235,9 @@ function updateSuggestList(keyword) {
 
 function setup() {
   const input = document.getElementById("cause-input");
-  const checkBtn = document.getElementById("check-btn");
   const slider = document.getElementById("score-slider");
 
-  function handleCheck() {
-    const text = input.value;
-    if (!text.trim()) {
-      showFeedback("请输入一个成因关键词，例如：过度放牧。", "error");
-      return;
-    }
-
-    const cause = findCause(text);
-    if (!cause) {
-      showFeedback("暂未匹配到该成因，请尝试换个说法。", "error");
-      return;
-    }
-
-    // 已经在对应列表中
-    const exists = (cause.type === "worsen" ? worsenSelected : improveSelected)
-      .some(c => c.key === cause.key);
-    if (exists) {
-      showFeedback("该成因已在列表中。", "success");
-      return;
-    }
-
-    const label = cause.type === "worsen" ? "导致荒漠化" : "改善荒漠化";
-    showFeedback(`识别为“${label}”成因：${cause.key}，已加入列表。`, "success");
-
-    if (cause.type === "worsen") {
-      worsenSelected.push(cause);
-    } else {
-      improveSelected.push(cause);
-    }
-
-    input.value = "";
-    renderLists();
-    updateScore();
-  }
-
-  checkBtn.addEventListener("click", handleCheck);
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      handleCheck();
-    }
-  });
-
-   input.addEventListener("input", () => {
+  input.addEventListener("input", () => {
     updateSuggestList(input.value);
     showFeedback("", "");
   });
