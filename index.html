@@ -9,7 +9,7 @@
   <div id="app">
     <header class="hero">
       <h1>荒漠化演化演示</h1>
-      <p>通过输入成因，探索荒漠化从轻到重的演变过程。</p>
+      <p>通过输入成因/改善因子，探索荒漠化从轻到重的演变过程。</p>
     </header>
 
     <main class="layout">
@@ -35,7 +35,7 @@
       <section class="cause-panel">
         <h2>成因输入</h2>
         <div class="input-row">
-          <input id="cause-input" type="text" placeholder="输入荒漠化成因，如：过度放牧" />
+          <input id="cause-input" type="text" placeholder="输入荒漠化成因，如：过度放牧/种植防护林" />
         </div>
         <ul id="suggest-list" class="suggest-list"></ul>
         <p id="feedback" class="feedback"></p>
@@ -48,13 +48,13 @@
             <ul id="worsen-list" class="cause-list"></ul>
           </div>
           <div class="list-block">
-            <h3>改善荒漠化的成因</h3>
+            <h3>改善荒漠化的因子</h3>
             <ul id="improve-list" class="cause-list"></ul>
           </div>
         </div>
 
         <p class="hint">
-          提示：先输入可能的成因，点击“检查”；若匹配到已知成因，可选择加入对应列表，系统会根据权重动态计算荒漠化水平并切换风貌图。
+          提示：尝试输入可能的成因，若匹配到已知成因，则可选择加入对应列表，系统会根据权重动态计算荒漠化水平并切换风貌图。
         </p>
       </section>
     </main>
