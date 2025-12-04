@@ -19,15 +19,17 @@ const IMPROVE_CAUSES = [
 
 // 图片等级：0~1 区间五档
 const LEVEL_IMAGES = [
-  { max: 0.2, src: "images/level1_placeholder.jpg", alt: "几乎未发生荒漠化的草地-轻微" },
-  { max: 0.4, src: "images/level2_placeholder.jpg", alt: "轻度荒漠化，植被略有破碎" },
-  { max: 0.6, src: "images/level3_placeholder.jpg", alt: "中度荒漠化，沙地与植被相间" },
-  { max: 0.8, src: "images/level4_placeholder.jpg", alt: "重度荒漠化，以沙地为主" },
-  { max: 1.01, src: "images/level5_placeholder.jpg", alt: "极重度荒漠化，几乎无植被" }
+  { max: 0.2, src: "images/1.png", alt: "几乎未发生荒漠化的草地-轻微" },
+  { max: 0.4, src: "images/2.png", alt: "轻度荒漠化，植被略有破碎" },
+  { max: 0.6, src: "images/3.png", alt: "中度荒漠化，沙地与植被相间" },
+  { max: 0.8, src: "images/4.png", alt: "重度荒漠化，以沙地为主" },
+  { max: 1.01, src: "images/5.png", alt: "极重度荒漠化，几乎无植被" }
 ];
 
 let worsenSelected = [];
 let improveSelected = [];
+let previewTimer = null;
+let lastRealScore = 0.5;
 
 function normalize(text) {
   return text.trim().toLowerCase();
@@ -63,16 +65,45 @@ function updateScore() {
   let score = worsen - improve + 0.5;
   score = Math.max(0, Math.min(1, score));
 
+  lastRealScore = score;
+
   const scoreText = document.getElementById("score-text");
   const scoreFill = document.getElementById("score-fill");
   const img = document.getElementById("desert-image");
+  const slider = document.getElementById("score-slider");
 
   scoreText.textContent = score.toFixed(2);
-  scoreFill.style.width = `${(1 - score) * 100}%`; // 分数越高，可视区域越少，象征土地退化
+  scoreFill.style.width = `${score * 100}%`;
 
   const level = LEVEL_IMAGES.find(l => score <= l.max) || LEVEL_IMAGES[LEVEL_IMAGES.length - 1];
   img.src = level.src;
   img.alt = level.alt;
+
+  // 每次真实分数变化时，顺便同步滑块位置
+  if (slider) {
+    slider.value = String(Math.round(score * 100));
+  }
+}
+
+function applyScoreToUI(score) {
+  score = Math.max(0, Math.min(1, score));
+
+  const scoreText = document.getElementById("score-text");
+  const scoreFill = document.getElementById("score-fill");
+  const img = document.getElementById("desert-image");
+  const slider = document.getElementById("score-slider");
+
+  scoreText.textContent = score.toFixed(2);
+  scoreFill.style.width = `${score * 100}%`;
+
+  const level = LEVEL_IMAGES.find(l => score <= l.max) || LEVEL_IMAGES[LEVEL_IMAGES.length - 1];
+  img.src = level.src;
+  img.alt = level.alt;
+
+  // 预览时不强制改滑块位置，避免和用户正在拖动冲突
+  if (!previewTimer && slider) {
+    slider.value = String(Math.round(score * 100));
+  }
 }
 
 function renderLists() {
@@ -209,6 +240,7 @@ function updateSuggestList(keyword) {
 function setup() {
   const input = document.getElementById("cause-input");
   const checkBtn = document.getElementById("check-btn");
+  const slider = document.getElementById("score-slider");
 
   function handleCheck() {
     const text = input.value;
@@ -255,6 +287,26 @@ function setup() {
    input.addEventListener("input", () => {
     updateSuggestList(input.value);
     showFeedback("", "");
+  });
+
+  // 手动拖动预览荒漠化等级
+  slider.addEventListener("input", () => {
+    const value = Number(slider.value) / 100; // 0~1
+    // 立即用预览值更新UI，但不改动真实成因分数
+    applyScoreToUI(value);
+
+    // 若用户持续拖动，则不断重置计时器
+    if (previewTimer) {
+      clearTimeout(previewTimer);
+    }
+
+    previewTimer = setTimeout(() => {
+      // 恢复到由成因计算出来的真实分数
+      applyScoreToUI(lastRealScore);
+      // 明确将滑块位置拉回真实分数
+      slider.value = String(Math.round(lastRealScore * 100));
+      previewTimer = null;
+    }, 3000); // 3秒后恢复
   });
 
   // 初始化
